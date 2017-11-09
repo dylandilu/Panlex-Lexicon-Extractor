@@ -1,0 +1,106 @@
+# -*- coding: utf-8 -*-                                                                                                  
+
+import sqlite3 as lite
+import sys
+from lxml import etree
+import xml.etree.ElementTree as ET
+import os
+def langid_extract(il):
+        wiktionary_file='langvar.xml'
+        print 'loading begin'
+        n=0
+        nsmap = {}
+        namespace="{http://www.w3.org/2001/XMLSchema-instance}"
+        context=etree.iterparse(wiktionary_file,events=['end'])
+        
+        for event, elem in context:
+                n+=1
+                
+                if elem.tag=='row':
+                        if elem.find('lang_code').text==il and elem.find('var_code').text=='0':
+                                return elem.find('id').text
+        return None
+def extract_bilingual_lexicon(il,hlx,il_lang_id,hl_lang_id,path_output):
+	folder='/data/m1/lud2/PanLex/panlex-20170601-json/'
+
+	con = lite.connect(folder+'panlex.db')
+
+	with con:
+		# il='bgp'
+		# hlx='eng'
+		# il_lang_id='2011'
+		# hl_lang_id='187'
+	        #hl_lang_id='759'
+		print 'loading expression file'
+
+		n=0
+		ll={}
+		hl={}
+		llm={}
+		hlm={}
+		mention_dic={}
+		nsmap = {}
+		expr_dic={}
+		cur = con.cursor()
+		cur.execute("SELECT * FROM Exprs")
+		while True:
+			row = cur.fetchone()
+			if row == None:
+				break
+			# print row[2].encode('utf-8')
+			# if row[2]=='25219449':
+			# 	print 'kkk'
+			expr_dic[row[1].encode('utf-8')]=row[2].encode('utf-8')
+			# if '25219449'==row[2]:
+			# 	print '25219449'
+			if row[2].encode('utf-8')==il_lang_id:
+				ll[row[1].encode('utf-8')]=row[3].encode('utf-8')
+			elif row[2].encode('utf-8')==hl_lang_id:
+				hl[row[1].encode('utf-8')]=row[3].encode('utf-8')
+		print 'step2'
+		cur.execute("SELECT * FROM Denotations")
+		while True:
+			row = cur.fetchone()
+			if row == None:
+				break
+			meaning_id=row[2].encode('utf-8')
+			ex_id=row[3].encode('utf-8')
+			if expr_dic[ex_id]==il_lang_id:
+				# llm[ex_id]=meaning_id
+				if meaning_id in mention_dic:
+					mention_dic[meaning_id][0].append(ex_id)
+				else:
+					mention_dic[meaning_id]=[[ex_id],[]]
+			elif  expr_dic[ex_id]==hl_lang_id:
+				if meaning_id in mention_dic:
+					mention_dic[meaning_id][1].append(ex_id)
+				else:
+					mention_dic[meaning_id]=[[],[ex_id]]
+		print len(mention_dic)
+	        f_out=open(os.path.join(path_output,'%s_%s_lexicon.txt'%(il,hlx)),'w')
+	        mm=0
+		print 'step3'
+		for key, onepair in mention_dic.iteritems():
+			t1=[]
+			t2=[]
+			for one_1 in onepair[0]:
+				t1.append(ll[one_1])
+			for one_1 in onepair[1]:
+				t2.append(hl[one_1])
+	                if t1!=[] and t2!=[]:
+	                        mm+=1
+	                        for ile in t1:
+	                                for hle in t2:
+	                                        f_out.write('%s\t%s\n'%(ile,hle))
+	        f_out.close()
+	print mm
+
+if __name__=="__main__":
+        langcode = sys.argv[1]
+        path_output = sys.argv[2]
+        langid = langid_extract(langcode)
+        if langid ==None:
+                print "please input the correct 3-digit language code"
+        else:
+                #path_output = '/data/m1/lud2/LORELEI/cleaned_multilingual_data/panlex/dic5lang'
+                extract_bilingual_lexicon(langcode,'eng',langid,'187',path_output)

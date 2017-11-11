@@ -92,8 +92,8 @@ if __name__=="__main__":
         parser.add_argument('--source_language', default='', help='identify the 3-digit language code for source language')
         parser.add_argument('--target_language', default='eng', help='identify the 3-digit language code for target language')
         parser.add_argument('--output_directory', default='lexicons', help='identify the path of the folder to save the extracted lexicon')
-        parser.add_argument('--panlex_dir', default='/data/m1/lud2/PanLex/panlex-20170601-json', help='path of folder of Panlex orginal json database')
-        parser.add_argument('--sql_database', default='/data/m1/lud2/PanLex/panlex-20170601-json/panlex.db', help='path of the sqlite database of panlex')
+        parser.add_argument('--panlex_dir', default='data/', help='path of folder for original Panlex json files')
+        parser.add_argument('--sql_database', default='database/panlex.db', help='path of processed sqlite database of panlex')
         args = parser.parse_args()
         if not os.path.exists(args.output_directory):
                 os.mkdir(args.output_directory)

@@ -28,3 +28,4 @@ If you find the lexicon extractor useful, please cite the following paper: [Embr
   year={2017}
 }
 ```
+Contact: Di Lu, lud2@rpi.edu

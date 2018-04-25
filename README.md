@@ -3,7 +3,7 @@ The script is a tool to extract bilingual lexicon for pair of languages from the
 # Extracted Lexicons (English-{target})
 
 # Usage
-The code is written is Python 2.7.
+The code is written in Python 2.7.
 
 [Download](https://drive.google.com/file/d/1tyACWPYrOQJ4m20dTjDPWtpX1XGYWtyf/view?usp=sharing) the required file of Panlex language information. Put the downloaded file under the folder of 'data'
 

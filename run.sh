@@ -1,0 +1,1 @@
+python panlex_bilingual_extract.py --source_language=spa --target_language=eng --output_directory=data/lexicons --panlex_dir=/data/m1/lud2/PanLex/panlex-20170601-json --sql_database=/data/m1/lud2/PanLex/panlex-20170601-json/panlex.db

@@ -4,9 +4,10 @@ The script is a tool to extract bilingual lexicon for pair of languages from the
 
 # Usage
 The code is written is Python 2.7.
-Download the required [file](https://drive.google.com/file/d/1tyACWPYrOQJ4m20dTjDPWtpX1XGYWtyf/view?usp=sharing) of Panlex language information. Put it under the folder of 'data'
 
-Download the preprocessed SQLite file of Panlex database [here](https://drive.google.com/file/d/1WiAkuBOFt0oFARvA1OWb_YsxPIDcKigW/view?usp=sharing), uncompress and put it under the folder of 'data'
+[Download](https://drive.google.com/file/d/1tyACWPYrOQJ4m20dTjDPWtpX1XGYWtyf/view?usp=sharing) the required file of Panlex language information. Put the downloaded file under the folder of 'data'
+
+[Download](https://drive.google.com/file/d/1WiAkuBOFt0oFARvA1OWb_YsxPIDcKigW/view?usp=sharing) the preprocessed SQLite file of Panlex database, uncompress and put the file under the folder of 'data'
 
 The script accepts 3-digit [ISO 639-3](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) language codes.
 ```

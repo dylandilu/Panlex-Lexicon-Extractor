@@ -1,6 +1,6 @@
 # Panlex-Lexicon-Extractor
 The script is a tool to extract bilingual lexicon for pair of languages from the [Panlex Database](https://db.panlex.org/) released by [Panlex](https://panlex.org/).
-# Extracted Lexicons ({target}-English)
+# Extracted Lexicons (English-{target})
 
 # Usage
 The code is written is Python 2.7.

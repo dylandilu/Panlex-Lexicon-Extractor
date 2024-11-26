@@ -26,66 +26,67 @@ def extract_bilingual_lexicon(source_language, target_language, source_langid, t
         #(il,hlx,il_lang_id,hl_lang_id,path_output)
 
         
-	con = lite.connect(sql_database)
+    con = lite.connect(sql_database)
 
-	with con:
-		print 'loading expression file'
+    with con:
+        print('loading expression file')
 
-		n=0
-		ll={}
-		hl={}
-		llm={}
-		hlm={}
-		mention_dic={}
-		nsmap = {}
-		expr_dic={}
-		cur = con.cursor()
-		cur.execute("SELECT * FROM Exprs")
-		while True:
-			row = cur.fetchone()
-			if row == None:
-				break
-			expr_dic[row[1].encode('utf-8')]=row[2].encode('utf-8')
-			if row[2].encode('utf-8')==source_langid:
-				ll[row[1].encode('utf-8')]=row[3].encode('utf-8')
-			elif row[2].encode('utf-8')==target_langid:
-				hl[row[1].encode('utf-8')]=row[3].encode('utf-8')
-		print 'step2'
-		cur.execute("SELECT * FROM Denotations")
-		while True:
-			row = cur.fetchone()
-			if row == None:
-				break
-			meaning_id=row[2].encode('utf-8')
-			ex_id=row[3].encode('utf-8')
-			if expr_dic[ex_id]==source_langid:
-				if meaning_id in mention_dic:
-					mention_dic[meaning_id][0].append(ex_id)
-				else:
-					mention_dic[meaning_id]=[[ex_id],[]]
-			elif  expr_dic[ex_id]==target_langid:
-				if meaning_id in mention_dic:
-					mention_dic[meaning_id][1].append(ex_id)
-				else:
-					mention_dic[meaning_id]=[[],[ex_id]]
+        n=0
+        ll={}
+        hl={}
+        llm={}
+        hlm={}
+        mention_dic={}
+        nsmap = {}
+        expr_dic={}
+        cur = con.cursor()
+        cur.execute("SELECT * FROM Exprs")
+        while True:
+            row = cur.fetchone()
+            if row == None:
+                break
+            expr_dic[row[1]]=row[2]
+            if row[2]==source_langid:
+                ll[row[1]]=row[3].encode('utf-8').decode('utf-8')
+            elif row[2]==target_langid:
+                hl[row[1]]=row[3].encode('utf-8').decode('utf-8')
+        
+        print('step2')
+        cur.execute("SELECT * FROM Denotations")
+        while True:
+            row = cur.fetchone()
+            if row == None:
+                break
+            meaning_id=row[2]
+            ex_id=row[3]
+            if expr_dic[ex_id]==source_langid:
+                if meaning_id in mention_dic:
+                    mention_dic[meaning_id][0].append(ex_id)
+                else:
+                    mention_dic[meaning_id]=[[ex_id],[]]
+            elif  expr_dic[ex_id]==target_langid:
+                if meaning_id in mention_dic:
+                    mention_dic[meaning_id][1].append(ex_id)
+                else:
+                    mention_dic[meaning_id]=[[],[ex_id]]
 
-	        f_out=open(os.path.join(output_directory,'%s_%s_lexicon.txt'%(source_language,target_language)),'w')
-	        mm=0
-		print 'step3'
-		for key, onepair in mention_dic.iteritems():
-			t1=[]
-			t2=[]
-			for one_1 in onepair[0]:
-				t1.append(ll[one_1])
-			for one_1 in onepair[1]:
-				t2.append(hl[one_1])
-	                if t1!=[] and t2!=[]:
-	                        mm+=1
-	                        for ile in t1:
-	                                for hle in t2:
-	                                        f_out.write('%s\t%s\n'%(ile,hle))
-	        f_out.close()
-	print mm
+        f_out=open(os.path.join(output_directory,'%s_%s_lexicon.txt'%(source_language,target_language)),'w', encoding='utf-8')
+        mm=0
+        print('step3')
+        for key, onepair in mention_dic.items():
+            t1=[]
+            t2=[]
+            for one_1 in onepair[0]:
+                t1.append(ll[one_1])
+            for one_1 in onepair[1]:
+                t2.append(hl[one_1])
+                if t1!=[] and t2!=[]:
+                    mm+=1
+                    for ile in t1:
+                        for hle in t2:
+                            f_out.write('%s\t%s\n'%(ile,hle))
+        f_out.close()
+    print(mm)
 
 if __name__=="__main__":
         parser = argparse.ArgumentParser(description='Extracting bi-lingual lexicion from Panlex')
@@ -101,12 +102,12 @@ if __name__=="__main__":
         # retrive the language variantion code from panlex database
         source_langid,target_langid = langid_extract(args.source_language, args.target_language, args.panlex_dir)
         if source_langid == None:
-                print "Error: incorret source language code"
+                print("Error: incorret source language code")
         if target_langid == None:
-                print "Error: incorret target language code"
+                print("Error: incorret target language code")
         else:
                 assert source_langid != None and target_langid != None
-                print "Extracting %s_%s -- %s_%s lexicon"%(args.source_language, source_langid, args.target_language, target_langid)
+                print(f"Extracting {args.source_language}_{source_langid} -- {args.target_language}_{target_langid} lexicon")
 
                 extract_bilingual_lexicon(args.source_language, args.target_language, source_langid, target_langid, args.output_directory, args.sql_database)
-        print "Extraction complated"
+        print("Extraction complated")
